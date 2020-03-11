@@ -103,6 +103,7 @@ bool DoesISP_disabled(){
         return false;
 }
 
+NSArray* devices;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -126,11 +127,19 @@ bool DoesISP_disabled(){
     }
     
     extern void MTRegisterFullFrameCallback(MTDeviceRef, void (*)(MTDeviceRef, void*, uint32_t));
-    
-    MTDeviceRef dev = MTDeviceCreateDefault();
-    MTRegisterFullFrameCallback(dev, fullframe_callback);
-    //_MTUnregisterFullFrameCallback
-    MTDeviceStart(dev, 0);
+
+    devices = CFBridgingRelease(MTDeviceCreateList());
+    for(int i = 0; i < devices.count; i++)
+    {
+      MTDeviceRef device = (__bridge MTDeviceRef)devices[i];
+      MTRegisterFullFrameCallback(device, fullframe_callback);
+      MTDeviceStart(device, 0);
+    }
+
+//    MTDeviceRef dev = MTDeviceCreateDefault();
+//    MTRegisterFullFrameCallback(dev, fullframe_callback);
+//    //_MTUnregisterFullFrameCallback
+//    MTDeviceStart(dev, 0);
     
     dd = global_get_shrinkdev();
     datafilePath = global_get_datafilePath();
@@ -427,6 +436,15 @@ NSView *minipad_cover_up = NULL, *minipad_cover_down = NULL;
     [super setRepresentedObject:representedObject];
     
     // Update the view, if already loaded.
+}
+
+-(void)dealloc {
+    for(int i = 0; i < devices.count; i++)
+    {
+      MTDeviceRef device = (__bridge MTDeviceRef)devices[i];
+      MTDeviceStop(device);
+    }
+    devices = nil;
 }
 
 
