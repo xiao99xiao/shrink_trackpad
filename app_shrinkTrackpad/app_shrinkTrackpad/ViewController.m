@@ -92,6 +92,73 @@ void fullframe_callback(MTDeviceRef device, void *framedata, uint32_t framedata_
     }
 }
 
+typedef struct { float x,y; } mtPoint;
+typedef struct { mtPoint pos,vel; } mtReadout;
+
+typedef struct {
+  int frame;
+  double timestamp;
+  int identifier, state, foo3, foo4;
+  mtReadout normalized;
+  float size;
+  int zero1;
+  float angle, majorAxis, minorAxis; // ellipsoid
+  mtReadout mm;
+  int zero2[2];
+  float unk2;
+} Finger;
+
+void callback(MTDeviceRef device, MTTouch data[], unsigned long nFingers, double timestamp, unsigned long frame) {
+  for (int i=0; i<nFingers; i++) {
+    MTTouch *f = &data[i];
+    printf("Frame %7d: Angle %6.2f, ellipse %6.3f x%6.3f; "
+           "position (%6.3f,%6.3f)",
+       f->frame,
+       f->angle * 90 / atan2(1,0),
+       f->majorAxis,
+       f->minorAxis,
+       f->absoluteVector.position.x,
+       f->absoluteVector.position.y);
+      
+      __block int16_t raw_x = f->absoluteVector.position.x;
+      __block int16_t raw_y = f->absoluteVector.position.y;
+      
+      if(label_collecting){
+          dispatch_async(dispatch_get_main_queue(), ^{
+              label_collecting.stringValue = [NSString stringWithFormat:@"%d, %d", raw_x, raw_y];
+          });
+      }
+      
+      if(reddot_appear){
+          dispatch_async(dispatch_get_main_queue(), ^{
+              
+              NSView *reddot = [reddot_map objectForKey:[NSString stringWithFormat:@"%d", f->fingerID]];
+              if(reddot == nil){
+                  reddot = [[NSView alloc] initWithFrame:CGRectMake(0, 0, reddot_dimen, reddot_dimen)];
+                  [reddot setWantsLayer:YES];
+                  reddot.layer.backgroundColor = [NSColor redColor].CGColor;
+                  reddot.layer.cornerRadius = 8;
+                  [minipad addSubview:reddot];
+                  [reddot_map setObject:reddot forKey:[NSString stringWithFormat:@"%d", f->fingerID]];
+              }
+              
+              if(f->state == MTTouchStateNotTracking){
+                  // Finger was left Trackpad
+                  [reddot setHidden:YES];
+              }
+              else{
+                  [reddot setHidden:NO];
+                  raw_x = raw_x - Xaxis_origin;
+                  raw_y = raw_y - Yaxis_origin;
+                  [reddot setFrameOrigin:NSMakePoint((((float)raw_x / Xaxis_length) * NSWidth([minipad frame])) - (NSWidth([reddot frame]) / 2), (((float)raw_y / Yaxis_length) * NSHeight([minipad frame])) - (NSHeight([reddot frame]) / 2))];
+              }
+          });
+      }
+  }
+  printf("\n");
+  return;
+}
+
 bool DoesISP_disabled(){
     FILE *popen_fp = popen("/usr/bin/csrutil status|/usr/bin/tr -d \" \"|/usr/bin/cut -d \":\" -f2", "r");
     char popen_buf[32];
@@ -132,7 +199,7 @@ NSArray* devices;
     for(int i = 0; i < devices.count; i++)
     {
       MTDeviceRef device = (__bridge MTDeviceRef)devices[i];
-      MTRegisterFullFrameCallback(device, fullframe_callback);
+      MTRegisterContactFrameCallback(device, callback);
       MTDeviceStart(device, 0);
     }
 
