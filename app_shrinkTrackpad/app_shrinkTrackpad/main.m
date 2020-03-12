@@ -214,7 +214,7 @@ int main(int argc, const char * argv[]) {
         char launch_config_formatted[strlen(launch_config) + 280];
         snprintf(launch_config_formatted, sizeof(launch_config_formatted), launch_config, argv[0]);
         
-        const char *config_path = "/System/Library/LaunchDaemons/com.cocoahuke.shrinkTrackpad.plist";
+        const char *config_path = "/Library/LaunchDaemons/com.cocoahuke.shrinkTrackpad.plist";
         if(access(config_path, F_OK)){
             FILE *fp = fopen(config_path, "wb");
             if(fp){
