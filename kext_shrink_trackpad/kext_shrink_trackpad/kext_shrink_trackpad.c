@@ -31,6 +31,35 @@
 #include <sys/errno.h>
 #include <sys/vnode.h>
 
+struct MTPoint {
+    float x;
+    float y;
+};
+
+struct MTVector {
+    struct MTPoint position;
+    struct MTPoint velocity;
+};
+
+struct MTTouch {
+    int32_t frame;
+    double timestamp;
+    int32_t identifier;
+    int32_t state;
+    int32_t fingerId;
+    int32_t handId;
+    struct MTVector normalized;
+    float size;
+    int32_t zero1;
+    float angle;
+    float majorAxis;
+    float minorAxis;
+    struct MTVector absVec;
+    int32_t zero2;
+    int32_t zero3;
+    float zDensity;
+};
+
 mach_vm_offset_t kaslr = 0;
 int16_t ignore_Xaxis_left = 0, ignore_Xaxis_right = 0;
 int16_t ignore_Yaxis_up = 0, ignore_Yaxis_down = 0;
@@ -64,6 +93,17 @@ uint64_t my_AppleMultitouchDevice__handleTouchFrame(void *this, void *framedata_
     return orig_AppleMultitouchDevice__handleTouchFrame(this, framedata_arg, framedata_len_ptr, a4);
 }
 
+uint64_t debug_AppleMultitouchDevice__handleTouchFrame(void *this, struct MTTouch data[], uint32_t *framedata_len_ptr, void *a4){
+    uint32_t nFingers = *framedata_len_ptr;
+    printf("MTTouch count: %d", nFingers);
+    if (nFingers > 0) {
+        struct MTTouch touch = data[0];
+        printf("MTTouch[0]: handId: %d, normalized.position.x: %f, normalized.position.y: %f, absVec.position.x: %f, absVec.position.y: %f, state: %d", touch.handId, touch.normalized.position.x, touch.normalized.position.y, touch.absVec.position.x, touch.absVec.position.y, touch.state);
+    }
+
+    return orig_AppleMultitouchDevice__handleTouchFrame(this, data, framedata_len_ptr, a4);
+}
+
 static int shrinkTP_open(dev_t dev, int flags, int devtype, struct proc *p) {
     return 0;
 }
@@ -93,7 +133,8 @@ static int shrinkTP_ioctl(dev_t dev, u_long cmd, caddr_t data, int fflag, struct
                 mach_vm_address_t *vtable_addr_inMem = vtable_addr + kaslr;
                 
                 orig_AppleMultitouchDevice__handleTouchFrame = *vtable_addr_inMem;
-                *vtable_addr_inMem = my_AppleMultitouchDevice__handleTouchFrame;
+//                *vtable_addr_inMem = my_AppleMultitouchDevice__handleTouchFrame;
+                *vtable_addr_inMem = debug_AppleMultitouchDevice__handleTouchFrame;
             }
         }break;
         case shrinkTP_CMD_ADJUST:{
