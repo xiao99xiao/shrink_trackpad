@@ -15,7 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0005A35C21697ADD0020F4EC /* app_shrinkTrackpad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = app_shrinkTrackpad.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0005A35C21697ADD0020F4EC /* Shrink Trackpad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Shrink Trackpad.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0005A35F21697ADD0020F4EC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		0005A36021697ADD0020F4EC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		0005A36221697ADD0020F4EC /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -53,7 +53,7 @@
 		0005A35D21697ADD0020F4EC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0005A35C21697ADD0020F4EC /* app_shrinkTrackpad.app */,
+				0005A35C21697ADD0020F4EC /* Shrink Trackpad.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,7 +101,7 @@
 			);
 			name = app_shrinkTrackpad;
 			productName = app_shrinkTrackpad;
-			productReference = 0005A35C21697ADD0020F4EC /* app_shrinkTrackpad.app */;
+			productReference = 0005A35C21697ADD0020F4EC /* Shrink Trackpad.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -300,11 +300,12 @@
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks/MultitouchSupport.framework/Versions/A",
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks/MultitouchSupport.framework",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				OTHER_LDFLAGS = /System/Library/PrivateFrameworks/MultitouchSupport.framework/Versions/A/MultitouchSupport;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cocoahuke.shrinkTrackpad;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Shrink Trackpad";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				VALID_ARCHS = "$(ARCHS_STANDARD)";
 			};
 			name = Debug;
 		};
@@ -326,11 +327,12 @@
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks/MultitouchSupport.framework/Versions/A",
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks/MultitouchSupport.framework",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				OTHER_LDFLAGS = /System/Library/PrivateFrameworks/MultitouchSupport.framework/Versions/A/MultitouchSupport;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cocoahuke.shrinkTrackpad;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Shrink Trackpad";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				VALID_ARCHS = "$(ARCHS_STANDARD)";
 			};
 			name = Release;
 		};
