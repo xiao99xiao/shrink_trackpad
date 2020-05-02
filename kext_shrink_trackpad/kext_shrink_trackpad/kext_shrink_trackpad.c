@@ -30,6 +30,7 @@
 #include <sys/ioccom.h>
 #include <sys/errno.h>
 #include <sys/vnode.h>
+#include <os/log.h>
 
 struct MTPoint {
     float x;
@@ -98,7 +99,8 @@ uint64_t debug_AppleMultitouchDevice__handleTouchFrame(void *this, struct MTTouc
     printf("MTTouch count: %d", nFingers);
     if (nFingers > 0) {
         struct MTTouch touch = data[0];
-        printf("MTTouch[0]: handId: %d, normalized.position.x: %f, normalized.position.y: %f, absVec.position.x: %f, absVec.position.y: %f, state: %d", touch.handId, touch.normalized.position.x, touch.normalized.position.y, touch.absVec.position.x, touch.absVec.position.y, touch.state);
+        
+        os_log(OS_LOG_DEFAULT, "MTTouch[0]: handId: %d, normalized.position.x: %f, normalized.position.y: %f, absVec.position.x: %f, absVec.position.y: %f, state: %d", touch.handId, touch.normalized.position.x, touch.normalized.position.y, touch.absVec.position.x, touch.absVec.position.y, touch.state);
     }
 
     return orig_AppleMultitouchDevice__handleTouchFrame(this, data, framedata_len_ptr, a4);
